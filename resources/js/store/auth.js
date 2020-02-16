@@ -7,7 +7,12 @@ const state = {
     user: null
 }
 
-const getters = {}
+const getters = {
+    // ログインチェック
+    check: state => !! state.user,
+    // ログインユーザーのuserがnullの場合に呼ばれてもエラー発生しないよう空文字を返す
+    username: state => state.user ? state.user.name : ''
+}
 
 /**
  * userステートの値を更新する
