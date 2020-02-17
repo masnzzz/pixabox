@@ -1,10 +1,12 @@
 import Axios from "axios"
+import { OK } from '../util'
 
 /**
  * ログイン済みユーザーを保持する
  */
 const state = {
-    user: null
+    user: null,
+    apiStatus: null
 }
 
 const getters = {
@@ -20,6 +22,9 @@ const getters = {
 const mutations = {
     setUser(state, user) {
         state.user = user
+    },
+    setApiStatus(state, status) {
+        state.apiStatus = status
     }
 }
 
@@ -32,8 +37,22 @@ const actions = {
         context.commit('setUser', response.data)
     },
     async login(context, data) {
+        context.commit('setApiStatus', null)
+        // 通信エラーの取得
         const response = await axios.post('/api/login', data)
-        context.commit('setUser', response.data)
+            .catch(err => err.response || err)
+
+        // 通信ステータスの更新 成功
+        if (response.status === OK) {
+            context.commit('setApiStatus', true)
+            context.commit('setUser', response.data)
+            return false
+        }
+
+        // 通信ステータスの更新 失敗
+        context.commit('setApiStatus', false)
+        // 別モジュールのミューテーションを呼び出す
+        context.commit('error/setCode', response.status, { root: true })
     },
     async logout(context) {
         const response = await axios.post('/api/logout')
