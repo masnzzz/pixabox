@@ -1,4 +1,4 @@
-import { OK, UNPROCESSABLE_ENTITY } from '../util'
+import { OK, CREATED, UNPROCESSABLE_ENTITY } from '../util'
 
 /**
  * ログイン済みユーザーを保持する
@@ -6,7 +6,8 @@ import { OK, UNPROCESSABLE_ENTITY } from '../util'
 const state = {
     user: null,
     apiStatus: null,
-    loginErrorMessages: null
+    loginErrorMessages: null,
+    registerErrorMessages: null
 }
 
 const getters = {
@@ -28,6 +29,9 @@ const mutations = {
     },
     setLoginErrorMessages(state, messages) {
         state.loginErrorMessages = messages
+    },
+    setRegisterErrorMessages(state, messages) {
+        state.registerErrorMessages = messages
     }
 }
 
@@ -37,8 +41,21 @@ const mutations = {
 const actions = {
     // 会員登録
     async register(context, data) {
+        context.commit('setApiStatus', null)
         const response = await axios.post('/api/register', data)
-        context.commit('setUser', response.data)
+
+        if (response.status === CREATED) {
+            context.commit('setApiStatus', true)
+            context.commit('setUser', response.data)
+            return false
+        }
+
+        context.commit('setApiStatus', false)
+        if (response.status === UNPROCESSABLE_ENTITY) {
+            context.commit('setRegisterErrorMessages', response.data.errors)
+        } else {
+            context.commit('error/setCode', response.status, { root: true })
+        }
     },
 
     // ログイン
@@ -65,8 +82,17 @@ const actions = {
 
     // ログアウト
     async logout(context) {
+        context.commit('setApiStatus', null)
         const response = await axios.post('/api/logout')
-        context.commit('setUser', null)
+    
+        if (response.status === OK) {
+          context.commit('setApiStatus', true)
+          context.commit('setUser', null)
+          return false
+        }
+    
+        context.commit('setApiStatus', false)
+        context.commit('error/setCode', response.status, { root: true })
     },
 
     // ログインユーザーチェック
