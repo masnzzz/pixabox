@@ -7,6 +7,9 @@ use Illuminate\Support\Arr;
 
 class Photo extends Model
 {
+    /** プライマリキーの型 */
+    protected $keyType = 'string';
+
     /** IDの桁数 */
     const ID_LENGTH = 12;
 

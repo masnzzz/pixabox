@@ -28,7 +28,7 @@ class PhotoSubmitApiTest extends TestCase
     public function should_ファイルをアップロードできる()
     {
         // S3ではなくテスト用のストレージを使用する
-        // -> storage/framework/testing
+        // → storage/framework/testing
         Storage::fake('s3');
 
         $response = $this->actingAs($this->user)
@@ -46,7 +46,7 @@ class PhotoSubmitApiTest extends TestCase
         $this->assertRegExp('/^[0-9a-zA-Z-_]{12}$/', $photo->id);
 
         // DBに挿入されたファイル名のファイルがストレージに保存されていること
-        Storage::cloud()->asssertExists($photo->filename);
+        Storage::cloud()->assertExists($photo->filename);
     }
 
     /**
