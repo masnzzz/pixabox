@@ -12,3 +12,6 @@ Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/user', fn() => Auth::user())->name('user');
+
+// 写真投稿
+Route::post('/photo', 'PhotoController@create')->name('photo.create');
