@@ -3,27 +3,25 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class Photo extends Model
 {
-    /** 
-     * プライマリキーの型
-     */
+    /** プライマリキーの型 */
     protected $keyType = 'string';
 
-    /**
-     * JSONに含める属性
-     */
-    protected $appends = [
+    /** JSONに含める属性 */
+    protected $visible = [
         'id', 'owner', 'url',
     ];
-    
-    /** 
-     * IDの桁数
-     */
+
+    /** JSONに含める属性 */
+    protected $appends = [
+        'url',
+    ];
+
+    /** IDの桁数 */
     const ID_LENGTH = 12;
 
     public function __construct(array $attributes = [])
@@ -35,8 +33,6 @@ class Photo extends Model
         }
     }
 
-
-
     /**
      * ランダムなID値をid属性に代入する
      */
@@ -45,13 +41,11 @@ class Photo extends Model
         $this->attributes['id'] = $this->getRandomId();
     }
 
-
-
     /**
      * ランダムなID値を生成する
      * @return string
      */
-    private function getRandomId(): string
+    private function getRandomId()
     {
         $characters = array_merge(
             range(0, 9), range('a', 'z'),
@@ -69,8 +63,6 @@ class Photo extends Model
         return $id;
     }
 
-
-
     /**
      * アクセサ - url
      * @return string
@@ -80,11 +72,9 @@ class Photo extends Model
         return Storage::cloud()->url($this->attributes['filename']);
     }
 
-
-
     /**
      * リレーションシップ - usersテーブル
-     * @return \Illuminate\Support\Facades\Storage
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function owner()
     {
