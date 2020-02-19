@@ -3,14 +3,26 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 
 class Photo extends Model
 {
-    /** プライマリキーの型 */
+    /** 
+     * プライマリキーの型
+     */
     protected $keyType = 'string';
 
-    /** IDの桁数 */
+    /**
+     * JSONに含める属性
+     */
+    protected $appends = [
+        'url',
+    ];
+    
+    /** 
+     * IDの桁数
+     */
     const ID_LENGTH = 12;
 
     public function __construct(array $attributes = [])
@@ -54,5 +66,27 @@ class Photo extends Model
         }
 
         return $id;
+    }
+
+
+
+    /**
+     * リレーションシップ - usersテーブル
+     * @return BelongsTo
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo('App\User', 'user_id', 'id', 'users');
+    }
+
+
+
+    /**
+     * アクセサ - url
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        return Storage::cloud()->url($this->attributes['filename']);
     }
 }
