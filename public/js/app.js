@@ -2109,6 +2109,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -2134,7 +2142,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      preview: null
+      preview: null,
+      photo: null
     };
   },
   methods: {
@@ -2168,11 +2177,44 @@ __webpack_require__.r(__webpack_exports__);
 
 
       reader.readAsDataURL(event.target.files[0]);
+      this.photo = event.target.files[0];
     },
     // 入力欄の値をプレビュー表示をクリアするメソッド
     reset: function reset() {
       this.preview = '';
+      this.photo = null;
       this.$el.querySelector('input[type="file"]').value = null;
+    },
+    submit: function submit() {
+      var _this2 = this;
+
+      return _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var formData, response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                formData = new FormData();
+                formData.append('photo', _this2.photo);
+                _context.next = 4;
+                return axios.post('/api/photos', formData);
+
+              case 4:
+                response = _context.sent;
+
+                _this2.reset();
+
+                _this2.$emit('input', false);
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     }
   }
 });
@@ -3755,21 +3797,33 @@ var render = function() {
     [
       _c("h2", { staticClass: "title" }, [_vm._v("Submit a photo")]),
       _vm._v(" "),
-      _c("form", { staticClass: "form" }, [
-        _c("input", {
-          staticClass: "form__item",
-          attrs: { type: "file" },
-          on: { change: _vm.onFileChange }
-        }),
-        _vm._v(" "),
-        _vm.preview
-          ? _c("output", { staticClass: "form__output" }, [
-              _c("img", { attrs: { src: _vm.preview, alt: "" } })
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _vm._m(0)
-      ])
+      _c(
+        "form",
+        {
+          staticClass: "form",
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.submit($event)
+            }
+          }
+        },
+        [
+          _c("input", {
+            staticClass: "form__item",
+            attrs: { type: "file" },
+            on: { change: _vm.onFileChange }
+          }),
+          _vm._v(" "),
+          _vm.preview
+            ? _c("output", { staticClass: "form__output" }, [
+                _c("img", { attrs: { src: _vm.preview, alt: "" } })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._m(0)
+        ]
+      )
     ]
   )
 }
