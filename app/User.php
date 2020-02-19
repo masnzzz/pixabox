@@ -21,12 +21,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
+     * JSONに含める属性
      */
-    protected $hidden = [
-        'password', 'remember_token',
+    protected $visible = [
+        'name',
     ];
 
     /**
