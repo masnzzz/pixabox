@@ -17,7 +17,7 @@ class Photo extends Model
      * JSONに含める属性
      */
     protected $appends = [
-        'url',
+        'id', 'owner', 'url',
     ];
     
     /** 
