@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class Photo extends Model
 {
@@ -39,7 +40,7 @@ class Photo extends Model
     /**
      * ランダムなID値をid属性に代入する
      */
-    private function setId(): void
+    private function setId()
     {
         $this->attributes['id'] = $this->getRandomId();
     }
@@ -71,22 +72,22 @@ class Photo extends Model
 
 
     /**
-     * リレーションシップ - usersテーブル
-     * @return BelongsTo
-     */
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo('App\User', 'user_id', 'id', 'users');
-    }
-
-
-
-    /**
      * アクセサ - url
      * @return string
      */
     public function getUrlAttribute()
     {
         return Storage::cloud()->url($this->attributes['filename']);
+    }
+
+
+
+    /**
+     * リレーションシップ - usersテーブル
+     * @return \Illuminate\Support\Facades\Storage
+     */
+    public function owner()
+    {
+        return $this->belongsTo('App\User', 'user_id', 'id', 'users');
     }
 }
