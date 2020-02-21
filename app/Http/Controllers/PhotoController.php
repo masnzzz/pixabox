@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePhoto;
 use App\Photo;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class PhotoController extends Controller
     public function __construct()
     {
         // 認証が必要
-        $this->middleware('auth')->except(['index', 'download']);
+        $this->middleware('auth')->except(['index', 'download', 'show']);
     }
 
     /**
@@ -31,9 +32,9 @@ class PhotoController extends Controller
     /**
      * 写真投稿
      * @param StorePhoto $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function create(StorePhoto $request)
+    public function create(StorePhoto $request): Response
     {
         // 投稿写真の拡張子を取得する
         $extension = $request->photo->extension();
@@ -71,9 +72,9 @@ class PhotoController extends Controller
     /**
      * 写真ダウンロード
      * @param Photo $photo
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function download(Photo $photo)
+    public function download(Photo $photo): Response
     {
         // 写真の存在チェック
         if (! Storage::cloud()->exists($photo->filename)) {
@@ -87,5 +88,19 @@ class PhotoController extends Controller
         ];
 
         return response(Storage::cloud()->get($photo->filename), 200, $headers);
+    }
+
+
+
+    /**
+     * 写真詳細
+     * @param string $id
+     * @return Photo
+     */
+    public function show(string $id): Photo
+    {
+        $photo = Photo::where('id', $id)->with(['owner'])->first();
+
+        return $photo ?? abort(404);
     }
 }
