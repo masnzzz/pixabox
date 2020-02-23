@@ -114,6 +114,7 @@ class PhotoController extends Controller
     }
 
 
+
     /**
      * コメント投稿
      * @param Photo $photo
