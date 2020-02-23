@@ -1,6 +1,13 @@
 <template>
-  <div v-if="photo" class="photo-detail" :class="{ 'photo-detail--column': fullWidth }">
-    <figure class="photo-detail__pane photo-detail__image" @click="fullWidth = ! fullWidth">
+  <div
+    v-if="photo"
+    class="photo-detail"
+    :class="{ 'photo-detail--column': fullWidth }"
+  >
+    <figure
+      class="photo-detail__pane photo-detail__image"
+      @click="fullWidth = ! fullWidth"
+    >
       <img :src="photo.url" alt="">
       <figcaption>Posted by {{ photo.owner.name }}</figcaption>
     </figure>
@@ -18,6 +25,21 @@
       <h2 class="photo-detail__title">
         <i class="icon ion-md-chatboxes"></i>Comments
       </h2>
+      <ul v-if="photo.comments.length > 0" class="photo-detail__comments">
+        <li
+          v-for="comment in photo.comments"
+          :key="comment.content"
+          class="photo-detail__commentItem"
+        >
+          <p class="photo-detail__commentBody">
+            {{ comment.content }}
+          </p>
+          <p class="photo-detail__commentInfo">
+            {{ comment.author.name }}
+          </p>
+        </li>
+      </ul>
+      <p v-else>No comments yet.</p>
       <form v-if="isLogin" @submit.prevent="addComment" class="form">
         <div v-if="commentErrors" class="errors">
           <ul v-if="commentErrors.content">
@@ -51,14 +73,6 @@ export default {
       commentErrors: null
     }
   },
-  watch: {
-    $route: {
-      async handler () {
-        await this.fetchPhoto()
-      },
-      immediate: true
-    }
-  },
   computed: {
     // ログイン時のみコメントフォームを表示
     isLogin () {
@@ -75,33 +89,41 @@ export default {
       }
 
       this.photo = response.data
+    },
+    async addComment () {
+      const response = await axios.post(`/api/photos/${this.id}/comments`, {
+        content: this.commentContent
+      })
+
+      // バリデーションエラー
+      if (response.status === UNPROCESSABLE_ENTITY) {
+        this.commentErrors = response.data.errors
+        return false
+      }
+
+      this.commentContent = ''
+      // エラーメッセージをクリア
+      this.commentErrors = null
+
+      // その他のエラー
+      if (response.status !== CREATED) {
+        this.$store.commit('error/setCode', response.status)
+        return false
+      }
+
+      this.photo.comments = [
+        response.data,
+        ...this.photo.comments
+      ]
     }
   },
-  async addComment () {
-    const response = await axios.post(`/api/photos/${this.id}/comments`, {
-      content: this.commentContent
-    })
-
-    // バリデーションエラー
-    if (response.status === UNPROCESSABLE_ENTITY) {
-      this.commentErrors = response.data.errors
-      return false
+  watch: {
+      $route: {
+        async handler () {
+          await this.fetchPhoto()
+        },
+        immediate: true
+      }
     }
-
-    this.commentContent = ''
-    // エラーメッセージをクリア
-    this.commentErrors = null
-
-    // その他のエラー
-    if (response.status !== CREATED) {
-      this.$store.commit('error/setCode', response.status)
-      return false
-    }
-
-    this.photo.comments = [
-      response.data,
-      ...this.photo.comments
-    ]
   }
-}
 </script>

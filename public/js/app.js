@@ -2646,6 +2646,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -2662,32 +2684,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       commentErrors: null
     };
   },
-  watch: {
-    $route: {
-      handler: function handler() {
-        var _this = this;
-
-        return _asyncToGenerator(
-        /*#__PURE__*/
-        _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _context.next = 2;
-                  return _this.fetchPhoto();
-
-                case 2:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee);
-        }))();
-      },
-      immediate: true
-    }
-  },
   computed: {
     // ログイン時のみコメントフォームを表示
     isLogin: function isLogin() {
@@ -2696,6 +2692,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   methods: {
     fetchPhoto: function fetchPhoto() {
+      var _this = this;
+
+      return _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get("/api/photos/".concat(_this.id));
+
+              case 2:
+                response = _context.sent;
+
+                if (!(response.status !== _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
+                  _context.next = 6;
+                  break;
+                }
+
+                _this.$store.commit('error/setCode', response.status);
+
+                return _context.abrupt("return", false);
+
+              case 6:
+                _this.photo = response.data;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    addComment: function addComment() {
       var _this2 = this;
 
       return _asyncToGenerator(
@@ -2707,13 +2740,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return axios.get("/api/photos/".concat(_this2.id));
+                return axios.post("/api/photos/".concat(_this2.id, "/comments"), {
+                  content: _this2.commentContent
+                });
 
               case 2:
                 response = _context2.sent;
 
-                if (!(response.status !== _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
+                if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"])) {
                   _context2.next = 6;
+                  break;
+                }
+
+                _this2.commentErrors = response.data.errors;
+                return _context2.abrupt("return", false);
+
+              case 6:
+                _this2.commentContent = ''; // エラーメッセージをクリア
+
+                _this2.commentErrors = null; // その他のエラー
+
+                if (!(response.status !== _util__WEBPACK_IMPORTED_MODULE_1__["CREATED"])) {
+                  _context2.next = 11;
                   break;
                 }
 
@@ -2721,10 +2769,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 return _context2.abrupt("return", false);
 
-              case 6:
-                _this2.photo = response.data;
+              case 11:
+                _this2.photo.comments = [response.data].concat(_toConsumableArray(_this2.photo.comments));
 
-              case 7:
+              case 12:
               case "end":
                 return _context2.stop();
             }
@@ -2733,57 +2781,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     }
   },
-  addComment: function addComment() {
-    var _this3 = this;
+  watch: {
+    $route: {
+      handler: function handler() {
+        var _this3 = this;
 
-    return _asyncToGenerator(
-    /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
-      var response;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return axios.post("/api/photos/".concat(_this3.id, "/comments"), {
-                content: _this3.commentContent
-              });
+        return _asyncToGenerator(
+        /*#__PURE__*/
+        _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+            while (1) {
+              switch (_context3.prev = _context3.next) {
+                case 0:
+                  _context3.next = 2;
+                  return _this3.fetchPhoto();
 
-            case 2:
-              response = _context3.sent;
-
-              if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"])) {
-                _context3.next = 6;
-                break;
+                case 2:
+                case "end":
+                  return _context3.stop();
               }
-
-              _this3.commentErrors = response.data.errors;
-              return _context3.abrupt("return", false);
-
-            case 6:
-              _this3.commentContent = ''; // エラーメッセージをクリア
-
-              _this3.commentErrors = null; // その他のエラー
-
-              if (!(response.status !== _util__WEBPACK_IMPORTED_MODULE_1__["CREATED"])) {
-                _context3.next = 11;
-                break;
-              }
-
-              _this3.$store.commit('error/setCode', response.status);
-
-              return _context3.abrupt("return", false);
-
-            case 11:
-              _this3.photo.comments = [response.data].concat(_toConsumableArray(_this3.photo.comments));
-
-            case 12:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3);
-    }))();
+            }
+          }, _callee3);
+        }))();
+      },
+      immediate: true
+    }
   }
 });
 
@@ -5042,6 +5064,40 @@ var render = function() {
             ),
             _vm._v(" "),
             _vm._m(1),
+            _vm._v(" "),
+            _vm.photo.comments.length > 0
+              ? _c(
+                  "ul",
+                  { staticClass: "photo-detail__comments" },
+                  _vm._l(_vm.photo.comments, function(comment) {
+                    return _c(
+                      "li",
+                      {
+                        key: comment.content,
+                        staticClass: "photo-detail__commentItem"
+                      },
+                      [
+                        _c("p", { staticClass: "photo-detail__commentBody" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(comment.content) +
+                              "\n        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("p", { staticClass: "photo-detail__commentInfo" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(comment.author.name) +
+                              "\n        "
+                          )
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                )
+              : _c("p", [_vm._v("No comments yet.")]),
             _vm._v(" "),
             _vm.isLogin
               ? _c(
