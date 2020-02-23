@@ -27,3 +27,4 @@ export const INTERNAL_SERVER_ERROR = 500
 export const UNPROCESSABLE_ENTITY = 422
 // 認証切れの場合のレスポンスコード
 export const UNAUTHORIZED = 419
+export const NOT_FOUND = 404
