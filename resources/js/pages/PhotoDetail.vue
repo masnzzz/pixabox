@@ -18,7 +18,7 @@
       <h2 class="photo-detail__title">
         <i class="icon ion-md-chatboxes"></i>Comments
       </h2>
-      <form @submit.prevent="addComment" class="form">
+      <form v-if="isLogin" @submit.prevent="addComment" class="form">
         <div v-if="commentErrors" class="errors">
           <ul v-if="commentErrors.content">
             <li v-for="msg in commentErrors.content" :key="msg">{{ msg }}</li>
@@ -59,6 +59,12 @@ export default {
       immediate: true
     }
   },
+  computed: {
+    // ログイン時のみコメントフォームを表示
+    isLogin () {
+      return this.$store.getters['auth/check']
+    }
+  },
   methods: {
     async fetchPhoto () {
       const response = await axios.get(`/api/photos/${this.id}`)
@@ -91,6 +97,11 @@ export default {
       this.$store.commit('error/setCode', response.status)
       return false
     }
+
+    this.photo.comments = [
+      response.data,
+      ...this.photo.comments
+    ]
   }
 }
 </script>
