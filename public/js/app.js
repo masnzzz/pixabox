@@ -2633,6 +2633,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -2645,7 +2650,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       photo: null,
       fullWidth: false,
-      commentContent: ''
+      commentContent: '',
+      commentErrors: null
     };
   },
   watch: {
@@ -2731,9 +2737,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
               response = _context3.sent;
-              _this3.commentContent = '';
 
-            case 4:
+              if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"])) {
+                _context3.next = 6;
+                break;
+              }
+
+              _this3.commentErrors = response.data.errors;
+              return _context3.abrupt("return", false);
+
+            case 6:
+              _this3.commentContent = ''; // エラーメッセージをクリア
+
+              _this3.commentErrors = null; // その他のエラー
+
+              if (!(response.status !== _util__WEBPACK_IMPORTED_MODULE_1__["CREATED"])) {
+                _context3.next = 11;
+                break;
+              }
+
+              _this3.$store.commit('error/setCode', response.status);
+
+              return _context3.abrupt("return", false);
+
+            case 11:
             case "end":
               return _context3.stop();
           }
@@ -5011,6 +5038,22 @@ var render = function() {
                 }
               },
               [
+                _vm.commentErrors
+                  ? _c("div", { staticClass: "errors" }, [
+                      _vm.commentErrors.content
+                        ? _c(
+                            "ul",
+                            _vm._l(_vm.commentErrors.content, function(msg) {
+                              return _c("li", { key: msg }, [
+                                _vm._v(_vm._s(msg))
+                              ])
+                            }),
+                            0
+                          )
+                        : _vm._e()
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
                 _c("textarea", {
                   directives: [
                     {
