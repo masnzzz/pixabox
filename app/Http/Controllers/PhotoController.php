@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Photo;
 use App\Http\Requests\StoreComment;
 use App\Http\Requests\StorePhoto;
-use App\Photo;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +27,7 @@ class PhotoController extends Controller
      */
     public function index()
     {
-        $photos = Photo::with(['owner'])
+        $photos = Photo::with(['owner', 'likes'])
             ->orderBy(Photo::CREATED_AT, 'desc')->paginate();
 
         return $photos;
@@ -108,7 +108,7 @@ class PhotoController extends Controller
     public function show(string $id): Photo
     {
         $photo = Photo::where('id', $id)
-            ->with(['owner', 'comments.author'])->first();
+            ->with(['owner', 'comments.author', 'likes'])->first();
 
         return $photo ?? abort(404);
     }

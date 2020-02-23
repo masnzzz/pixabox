@@ -22,8 +22,6 @@ class LikeApiTest extends TestCase
         $this->photo = Photo::first();
     }
 
-
-
     /**
      * @test
      */
@@ -42,8 +40,6 @@ class LikeApiTest extends TestCase
         $this->assertEquals(1, $this->photo->likes()->count());
     }
 
-
-
     /**
      * @test
      */
@@ -55,8 +51,6 @@ class LikeApiTest extends TestCase
 
         $this->assertEquals(1, $this->photo->likes()->count());
     }
-
-
 
     /**
      * @test
