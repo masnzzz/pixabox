@@ -1,10 +1,6 @@
-npm run watch
-
-postgres -D /usr/local/var/postgres
-
 # Pixabox
 
-Pixabox
+写真投稿サイト
 
 # Requirement
 
